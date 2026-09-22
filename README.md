@@ -295,6 +295,10 @@ h4kfi/
   mcp_server.py   - MCP server (AI agent integration)
 ```
 
+## For agents & contributors
+
+Building on h4kfi, or having an AI agent install or extend it? Start with [AGENTS.md](AGENTS.md) — safety rules, AI-driven install, and development/release workflow — and the behavior specs in [specs/](specs/).
+
 ## Credits
 
 h4kfi is a fork of [AutoWIFI](https://github.com/momenbasel/AutoWIFI) by momenbasel, refocused around MCP integration. See [NOTICE.md](NOTICE.md) for what changed.
