@@ -1,13 +1,17 @@
-# h4kfi
+<p align="center">
+  <img src="docs/banner.png" alt="h4kfi" width="820">
+</p>
 
-**Wireless penetration testing framework, built MCP-first for [OpenCode](https://opencode.ai).**
-
-Automates the full attack chain — recon through exploitation — from a terminal UI, a CLI, or an AI agent driving it over MCP. Claude Code works too, but it ships an extra guardrail layer that gets in the way of this specific tool category; see [Claude Code limitations](#claude-code-limitations) below.
+<p align="center">
+  <strong>Wireless penetration testing framework, built MCP-first for <a href="https://opencode.ai">OpenCode</a>.</strong>
+</p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License"></a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue.svg" alt="Python">
 </p>
+
+Automates the full attack chain — recon through exploitation — from a terminal UI, a CLI, or an AI agent driving it over MCP. Claude Code works too, but it ships an extra guardrail layer that gets in the way of this specific tool category; see [Claude Code limitations](#claude-code-limitations) below.
 
 ## Features
 
