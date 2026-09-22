@@ -13,6 +13,21 @@
 
 Automates the full attack chain — recon through exploitation — from a terminal UI, a CLI, or an AI agent driving it over MCP. Claude Code works too, but it ships an extra guardrail layer that gets in the way of this specific tool category; see [Claude Code limitations](#claude-code-limitations) below.
 
+## Driving it with an AI agent
+
+This is the point of h4kfi. Every tool — monitor mode, scanning, handshake and PMKID capture, WPS attacks, deauth, cracking — is exposed over MCP, so an AI agent runs the whole engagement from a plain-language brief. You describe the goal and the authorization; the agent picks the interface, scans, chooses a target, decides the attack vector from the encryption it sees, captures, and cracks — calling the tools itself and reacting to what each step returns. No flags to memorize, no fixed script.
+
+A session in OpenCode looks like this:
+
+> **You:** I'm authorized to test my own AP, SSID `HOME-5G`. Audit it end to end and try to recover the passphrase with rockyou.
+>
+> **Agent:** Enabling monitor mode on `wlan0`… scanning.
+> Found `HOME-5G` on channel 36 — WPA2-PSK, −48 dBm, 2 associated clients. Best path is a 4-way handshake, so I'll deauth one client and capture, then crack offline.
+> Captured and verified a handshake (`eapol` frames present). Running aircrack-ng against rockyou…
+> Recovered the passphrase: `••••••••`. Interface restored to managed mode.
+
+The agent made every tactical call — which client to deauth, when the capture was valid, which backend to crack with — from the tool output alone. You stayed at the level of intent and authorization. See [MCP Server](#mcp-server-ai-agent-integration) for setup.
+
 ## Features
 
 - **Multi-vector attacks** — WEP (ARP replay, fragmentation, chopchop), WPA/WPA2 (handshake capture, PMKID), WPS (pixie dust, PIN brute force)
