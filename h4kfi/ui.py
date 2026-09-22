@@ -20,13 +20,13 @@ ERR = "red"
 INFO = "cyan"
 KEY_COLOR = "bold green"
 
-BANNER_ART = """[bold green]
+BANNER_ART = """[bold red]
   ██   ██ ██  ███ ██   ██ ███████  █████
   ██   ██ ██   ██ ██  ██  ██         ██
   ███████ ███████ ████    █████      ██
   ██   ██      ██ ██  ██  ██         ██
   ██   ██      ██ ██   ██ ██       █████
-[/bold green]"""
+[/bold red]"""
 
 
 class Display:
