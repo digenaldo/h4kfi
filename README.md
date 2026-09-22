@@ -13,6 +13,10 @@
 
 Automates the full attack chain — recon through exploitation — from a terminal UI, a CLI, or an AI agent driving it over MCP. Claude Code works too, but it ships an extra guardrail layer that gets in the way of this specific tool category; see [Claude Code limitations](#claude-code-limitations) below.
 
+<p align="center">
+  <img src="docs/cli.png" alt="h4kfi interactive TUI" width="720">
+</p>
+
 ## Driving it with an AI agent
 
 This is the point of h4kfi. Every tool — monitor mode, scanning, handshake and PMKID capture, WPS attacks, deauth, cracking — is exposed over MCP, so an AI agent runs the whole engagement from a plain-language brief. You describe the goal and the authorization; the agent picks the interface, scans, chooses a target, decides the attack vector from the encryption it sees, captures, and cracks — calling the tools itself and reacting to what each step returns. No flags to memorize, no fixed script.
@@ -221,10 +225,6 @@ sudo h4kfi
 ```
 
 Launches the full TUI with menu-driven workflow — scan, select target, attack, crack.
-
-<p align="center">
-  <img src="docs/cli.png" alt="h4kfi interactive TUI" width="720">
-</p>
 
 ### CLI mode
 
