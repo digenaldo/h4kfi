@@ -387,7 +387,7 @@ class WEPAttack:
         return None
 
     def _get_our_mac(self):
-        from autowifi.interface import get_mac
+        from h4kfi.interface import get_mac
         return get_mac(self.interface)
 
     def stop(self):
@@ -415,7 +415,7 @@ class WPAAttack:
         self._handshake_captured = Event()
 
     def capture_handshake(self, deauth_count=15, timeout=180, deauth_interval=10):
-        from autowifi.handshake import HandshakeCapture, verify_handshake
+        from h4kfi.handshake import HandshakeCapture, verify_handshake
         start = time.time()
 
         capture = HandshakeCapture(self.interface, self.bssid, self.channel, self.output_dir)

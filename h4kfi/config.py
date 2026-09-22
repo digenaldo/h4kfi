@@ -11,9 +11,9 @@ DEFAULT_CONFIG = {
     "handshake_timeout": 180,
     "default_wordlist": "/usr/share/wordlists/rockyou.txt",
     "crack_backend": "aircrack",
-    "output_dir": "~/.autowifi/output",
-    "session_dir": "~/.autowifi/sessions",
-    "report_dir": "~/.autowifi/reports",
+    "output_dir": "~/.h4kfi/output",
+    "session_dir": "~/.h4kfi/sessions",
+    "report_dir": "~/.h4kfi/reports",
     "hashcat_workload": 3,
     "wps_timeout": 600,
     "wps_pixie_dust": True,
@@ -29,7 +29,7 @@ DEFAULT_CONFIG = {
 
 class Config:
     _instance = None
-    _config_path = Path.home() / ".autowifi" / "config.json"
+    _config_path = Path.home() / ".h4kfi" / "config.json"
 
     def __new__(cls):
         if cls._instance is None:

@@ -4,20 +4,20 @@ import time
 import signal
 import click
 
-from autowifi import __version__
-from autowifi.config import Config
-from autowifi.ui import Display
-from autowifi import deps
-from autowifi import interface as iface
-from autowifi.scanner import NetworkScanner
-from autowifi.attacks import (
+from h4kfi import __version__
+from h4kfi.config import Config
+from h4kfi.ui import Display
+from h4kfi import deps
+from h4kfi import interface as iface
+from h4kfi.scanner import NetworkScanner
+from h4kfi.attacks import (
     WEPAttack, WPAAttack, WPSAttack, PMKIDAttack, Deauth,
     get_recommended_attacks, AttackType,
 )
-from autowifi.handshake import verify_handshake
-from autowifi.cracker import Cracker, Backend, find_wordlists
-from autowifi.session import Session
-from autowifi.report import ReportGenerator
+from h4kfi.handshake import verify_handshake
+from h4kfi.cracker import Cracker, Backend, find_wordlists
+from h4kfi.session import Session
+from h4kfi.report import ReportGenerator
 
 
 class AppState:
@@ -297,7 +297,7 @@ def _run_deauth(state):
             deauth.wait(timeout=30)
 
     state.display.success("deauthentication complete")
-    from autowifi.attacks import AttackResult
+    from h4kfi.attacks import AttackResult
     return AttackResult(
         success=True, attack_type="deauth",
         target_bssid=state.target.bssid, target_essid=state.target.essid,
@@ -338,7 +338,7 @@ def do_crack(state):
 
     state.display.console.print()
     backends = ["aircrack-ng"]
-    from autowifi.deps import check_tool
+    from h4kfi.deps import check_tool
     if check_tool("hashcat"):
         backends.append("hashcat")
     if check_tool("john"):
@@ -545,7 +545,7 @@ def do_settings(state):
 
 
 def do_dependencies(state):
-    from autowifi.deps import REQUIRED, OPTIONAL, check_tool
+    from h4kfi.deps import REQUIRED, OPTIONAL, check_tool
     all_deps = {}
     for tool, pkg in REQUIRED.items():
         all_deps[tool] = (check_tool(tool), f"[required] {pkg}")
@@ -559,7 +559,7 @@ def do_dependencies(state):
 @click.pass_context
 def main(ctx, version):
     if version:
-        click.echo(f"autowifi v{__version__}")
+        click.echo(f"h4kfi v{__version__}")
         return
     if ctx.invoked_subcommand is None:
         interactive_mode()

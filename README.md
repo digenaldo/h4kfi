@@ -1,45 +1,35 @@
-<p align="center">
-  <img src="docs/banner.png?v=2" alt="AutoWIFI" width="800">
-</p>
+# h4kfi
+
+**Wireless penetration testing framework, built MCP-first for [OpenCode](https://opencode.ai).**
+
+Automates the full attack chain — recon through exploitation — from a terminal UI, a CLI, or an AI agent driving it over MCP. Claude Code works too, but it ships an extra guardrail layer that gets in the way of this specific tool category; see [Claude Code limitations](#claude-code-limitations) below.
 
 <p align="center">
-  <strong>Wireless penetration testing framework.</strong><br>
-  Automates the full attack chain - recon through exploitation - with a clean terminal interface.
-</p>
-
-<p align="center">
-  <a href="https://pypi.org/project/autowifi/"><img src="https://img.shields.io/pypi/v/autowifi.svg" alt="PyPI"></a>
-  <a href="https://pypi.org/project/autowifi/"><img src="https://img.shields.io/pypi/pyversions/autowifi.svg" alt="Python"></a>
-  <a href="https://github.com/momenbasel/AutoWIFI/blob/main/LICENSE"><img src="https://img.shields.io/pypi/l/autowifi.svg" alt="License"></a>
-  <a href="https://github.com/momenbasel/AutoWIFI/stargazers"><img src="https://img.shields.io/github/stars/momenbasel/AutoWIFI?style=social" alt="Stars"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License"></a>
+  <img src="https://img.shields.io/badge/python-3.9%2B-blue.svg" alt="Python">
 </p>
 
 ## Features
 
-- **Multi-vector attacks** - WEP (ARP replay, fragmentation, chopchop), WPA/WPA2 (handshake capture, PMKID), WPS (pixie dust, PIN brute force)
-- **Smart target selection** - Auto-recommends attack vectors based on target encryption and configuration
-- **Live scanning** - Real-time network discovery with signal strength visualization and client tracking
-- **Multiple cracking backends** - aircrack-ng, hashcat (GPU), John the Ripper
-- **Session management** - Save, restore, and resume interrupted operations
-- **Report generation** - Export findings in HTML, JSON, and text formats
-- **Interface management** - Automatic monitor mode, MAC randomization, channel control
-- **Handshake verification** - Multi-method validation of captured handshakes
-- **Wordlist discovery** - Auto-detects installed wordlists (rockyou, seclists, etc.)
+- **Multi-vector attacks** — WEP (ARP replay, fragmentation, chopchop), WPA/WPA2 (handshake capture, PMKID), WPS (pixie dust, PIN brute force)
+- **Smart target selection** — Auto-recommends attack vectors based on target encryption and configuration
+- **Live scanning** — Real-time network discovery with signal strength visualization and per-client tracking
+- **Multiple cracking backends** — aircrack-ng, hashcat (GPU), John the Ripper
+- **Session management** — Save, restore, and resume interrupted operations
+- **Report generation** — Export findings in HTML, JSON, and text formats
+- **Interface management** — Automatic monitor mode, MAC randomization, channel control
+- **Handshake verification** — Multi-method validation of captured handshakes
+- **Wordlist discovery** — Auto-detects installed wordlists (rockyou, seclists, etc.)
+- **MCP server** — Every tool above exposed to AI agents, OpenCode first
 
 ## Requirements
 
 - Linux with a wireless adapter that supports monitor mode
 - Python 3.9+
 - aircrack-ng suite (required)
-- Optional: hashcat, reaver, bully, hcxdumptool, mdk4, macchanger
+- Optional: hashcat, reaver, bully, hcxdumptool (v6.x supported), mdk4, macchanger
 
 ## Installation
-
-### From PyPI (recommended)
-
-```bash
-pip install autowifi
-```
 
 ### Install system dependencies
 
@@ -66,82 +56,69 @@ Only `aircrack-ng` is strictly required. The rest unlock additional attack vecto
 ### From source
 
 ```bash
-git clone https://github.com/momenbasel/AutoWIFI.git
-cd AutoWIFI
+git clone https://github.com/digenaldo/h4kfi.git
+cd h4kfi
 pip install .
 ```
 
 ### Development
 
 ```bash
-git clone https://github.com/momenbasel/AutoWIFI.git
-cd AutoWIFI
+git clone https://github.com/digenaldo/h4kfi.git
+cd h4kfi
 pip install -e .
 ```
 
 ### Verify installation
 
 ```bash
-sudo autowifi --version
+sudo h4kfi --version
 ```
 
 ## MCP Server (AI Agent Integration)
 
-AutoWIFI includes an MCP (Model Context Protocol) server, making all wireless pentesting tools available to AI coding assistants like **Claude Code**, **Codex**, **Gemini**, and **Cursor**.
+h4kfi includes an MCP (Model Context Protocol) server that exposes every wireless pentesting tool over standard MCP stdio transport. It's built and tested primarily against **OpenCode**, and also works with any other MCP-compatible client (Cursor, Codex, Gemini, Claude Code).
 
 ### Install with MCP support
 
 ```bash
-pip install autowifi[mcp]
+pip install h4kfi[mcp]
 ```
 
 ### Privileges (required)
 
-Every tool that touches the wireless interface (`list_interfaces`, `enable_monitor`, `scan_networks`, `capture_handshake`, `deauth`, etc.) needs root, same as `sudo autowifi`. But MCP clients launch `autowifi-mcp` as a stdio subprocess with no TTY attached, so plain `sudo` can't prompt for a password there — the process just fails or hangs.
+Every tool that touches the wireless interface (`list_interfaces`, `enable_monitor`, `scan_networks`, `capture_handshake`, `deauth`, etc.) needs root, same as `sudo h4kfi`. But MCP clients launch `h4kfi-mcp` as a stdio subprocess with no TTY attached, so plain `sudo` can't prompt for a password there — the process just fails or hangs.
 
-Set up passwordless sudo scoped to the exact `autowifi-mcp` binary path (find it with `which autowifi-mcp`) — **not** a blanket NOPASSWD rule:
+Set up passwordless sudo scoped to the exact `h4kfi-mcp` binary path (find it with `which h4kfi-mcp`) — **not** a blanket NOPASSWD rule:
 
 ```bash
-echo "$USER ALL=(root) NOPASSWD: $(which autowifi-mcp)" > /tmp/autowifi-mcp-sudoers
-sudo visudo -c -f /tmp/autowifi-mcp-sudoers   # validate before installing
-sudo install -m 0440 -o root -g root /tmp/autowifi-mcp-sudoers /etc/sudoers.d/autowifi-mcp
+echo "$USER ALL=(root) NOPASSWD: $(which h4kfi-mcp)" > /tmp/h4kfi-mcp-sudoers
+sudo visudo -c -f /tmp/h4kfi-mcp-sudoers   # validate before installing
+sudo install -m 0440 -o root -g root /tmp/h4kfi-mcp-sudoers /etc/sudoers.d/h4kfi-mcp
 ```
 
 This grants passwordless root execution of a binary that can run deauth attacks and crack captured passwords — scope it to the exact absolute path only, and be aware that whoever can invoke that path non-interactively (e.g. anyone with write access to it) gets that privilege too.
 
 Then point your MCP client at `sudo -n <path>` instead of the bare command — the `-n` makes it fail fast rather than hang if the sudoers rule is ever missing.
 
-### Configure for Claude Code
+### Configure for OpenCode (recommended)
 
-```bash
-claude mcp add --scope user autowifi -- sudo -n $(which autowifi-mcp)
-```
-
-Claude Code's auto mode classifier also blocks these tool calls by default even after the server is registered and running as root — `scan_networks` gets denied as a "Third-Party Attack" (a monitor-mode scan necessarily picks up every nearby network's broadcast traffic, not just yours, and the classifier can't tell that apart from recon on someone else's network), and the model **cannot grant itself** the exemption — editing its own permissions is separately blocked as "Self-Modification". You have to add the allowlist yourself, in `~/.claude/settings.json`:
+Add an `mcp` entry to your OpenCode config (`opencode.json`, or `~/.config/opencode/opencode.json` for a user-wide setup):
 
 ```json
 {
-  "permissions": {
-    "allow": [
-      "mcp__autowifi__list_interfaces",
-      "mcp__autowifi__check_dependencies",
-      "mcp__autowifi__enable_monitor",
-      "mcp__autowifi__disable_monitor",
-      "mcp__autowifi__scan_networks",
-      "mcp__autowifi__get_recommended_attacks",
-      "mcp__autowifi__capture_handshake",
-      "mcp__autowifi__capture_pmkid",
-      "mcp__autowifi__wps_pixie_dust",
-      "mcp__autowifi__deauth",
-      "mcp__autowifi__crack_handshake",
-      "mcp__autowifi__verify_handshake",
-      "mcp__autowifi__find_wordlists"
-    ]
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "h4kfi": {
+      "type": "local",
+      "command": ["sudo", "-n", "/path/to/h4kfi-mcp"],
+      "enabled": true
+    }
   }
 }
 ```
 
-(Merge this into your existing settings.json rather than replacing it wholesale.) This is Claude Code-specific — the other clients below don't have this classifier layer.
+OpenCode has no extra classifier layer on top of MCP tool calls — once the server is registered and the sudoers rule above is in place, all `h4kfi_*` tools are available to the agent without any further per-tool allowlisting. This is why OpenCode is the primary target for this project: for a tool category like wireless pentesting, where every call is inherently "legitimate recon that looks identical to an attack from the outside," a client that trusts your MCP permission model instead of re-judging each call itself is a better fit.
 
 ### Configure for Cursor
 
@@ -150,13 +127,21 @@ Add to `.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "autowifi": {
+    "h4kfi": {
       "command": "sudo",
-      "args": ["-n", "/path/to/autowifi-mcp"]
+      "args": ["-n", "/path/to/h4kfi-mcp"]
     }
   }
 }
 ```
+
+### Configure for Claude Code (secondary option)
+
+```bash
+claude mcp add --scope user h4kfi -- sudo -n $(which h4kfi-mcp)
+```
+
+This works, but read [Claude Code limitations](#claude-code-limitations) below before relying on it — you'll need a manual permissions edit that OpenCode and Cursor don't require.
 
 ### Available MCP tools
 
@@ -176,38 +161,68 @@ Add to `.cursor/mcp.json`:
 | `find_wordlists` | Discover installed wordlists |
 | `check_dependencies` | Check installed tools |
 
-Now your AI agent can run wireless pentests autonomously.
+## Claude Code limitations
+
+Claude Code adds an auto mode classifier on top of MCP tool calls, and it doesn't play well with wireless pentesting tools specifically:
+
+- **`scan_networks` gets denied as a "Third-Party Attack."** A monitor-mode scan necessarily picks up every nearby network's broadcast traffic, not just the one you're authorized to test — the classifier can't distinguish that from recon aimed at someone else's network, so it blocks the call by default even when the server is registered and running correctly as root.
+- **The model can't fix this itself.** Granting the exemption means editing Claude Code's own permission settings, and that's separately blocked as "Self-Modification" — the agent is not allowed to expand its own allowlist, even for a tool it's already been given access to invoke.
+- **You have to do it by hand.** Merge this into `~/.claude/settings.json` (don't replace the file wholesale — merge into whatever's already there):
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "mcp__h4kfi__list_interfaces",
+      "mcp__h4kfi__check_dependencies",
+      "mcp__h4kfi__enable_monitor",
+      "mcp__h4kfi__disable_monitor",
+      "mcp__h4kfi__scan_networks",
+      "mcp__h4kfi__get_recommended_attacks",
+      "mcp__h4kfi__capture_handshake",
+      "mcp__h4kfi__capture_pmkid",
+      "mcp__h4kfi__wps_pixie_dust",
+      "mcp__h4kfi__deauth",
+      "mcp__h4kfi__crack_handshake",
+      "mcp__h4kfi__verify_handshake",
+      "mcp__h4kfi__find_wordlists"
+    ]
+  }
+}
+```
+
+This is Claude Code-specific — OpenCode and Cursor don't have this classifier layer, which is why they're the recommended clients for this project. Claude Code stays supported as a fallback option for people already standardized on it, but expect the extra setup step above, and expect it again on every machine you configure it on.
 
 ## Usage
 
 ### Interactive mode
 
 ```bash
-sudo autowifi
+sudo h4kfi
 ```
 
-Launches the full TUI with menu-driven workflow - scan, select target, attack, crack.
+Launches the full TUI with menu-driven workflow — scan, select target, attack, crack.
 
 ### CLI mode
 
 Scan networks:
 ```bash
-sudo autowifi scan -i wlan0mon -d 30
+sudo h4kfi scan -i wlan0mon -d 30
 ```
 
 Capture WPA handshake:
 ```bash
-sudo autowifi capture -i wlan0mon -b AA:BB:CC:DD:EE:FF -c 6 -t 120
+sudo h4kfi capture -i wlan0mon -b AA:BB:CC:DD:EE:FF -c 6 -t 120
 ```
 
 Crack a capture file:
 ```bash
-sudo autowifi crack handshake.cap -w /usr/share/wordlists/rockyou.txt
+sudo h4kfi crack handshake.cap -w /usr/share/wordlists/rockyou.txt
 ```
 
 Use hashcat backend:
 ```bash
-sudo autowifi crack handshake.cap -w rockyou.txt --backend hashcat
+sudo h4kfi crack handshake.cap -w rockyou.txt --backend hashcat
 ```
 
 ## Attack Vectors
@@ -224,7 +239,7 @@ sudo autowifi crack handshake.cap -w rockyou.txt --backend hashcat
 
 ## Configuration
 
-Settings are stored in `~/.autowifi/config.json`. Edit through the interactive menu or directly:
+Settings are stored in `~/.h4kfi/config.json`. Edit through the interactive menu or directly:
 
 ```json
 {
@@ -242,7 +257,7 @@ Settings are stored in `~/.autowifi/config.json`. Edit through the interactive m
 ## Project Structure
 
 ```
-autowifi/
+h4kfi/
   cli.py          - Entry point, interactive mode, CLI commands
   ui.py           - Terminal UI components (Rich-based)
   scanner.py      - Network discovery and client tracking
@@ -254,7 +269,12 @@ autowifi/
   report.py       - HTML/JSON/text report generation
   config.py       - Configuration management
   deps.py         - Dependency checking
+  mcp_server.py   - MCP server (AI agent integration)
 ```
+
+## Credits
+
+h4kfi is a fork of [AutoWIFI](https://github.com/momenbasel/AutoWIFI) by momenbasel, refocused around MCP integration. See [NOTICE.md](NOTICE.md) for what changed.
 
 ## Legal
 

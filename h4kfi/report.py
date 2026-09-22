@@ -13,7 +13,7 @@ class ReportGenerator:
     def generate(self, session_data, fmt="all"):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         essid = session_data.get("target_essid", "unknown").replace(" ", "_")
-        base_name = f"autowifi_{essid}_{timestamp}"
+        base_name = f"h4kfi_{essid}_{timestamp}"
 
         files = []
         if fmt in ("all", "json"):
@@ -40,7 +40,7 @@ class ReportGenerator:
         filepath = self.output_dir / f"{base_name}.txt"
         lines = []
         lines.append("=" * 72)
-        lines.append("AUTOWIFI - Wireless Security Audit Report")
+        lines.append("H4KFI - Wireless Security Audit Report")
         lines.append("=" * 72)
         lines.append("")
         lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -115,7 +115,7 @@ class ReportGenerator:
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoWIFI Report - {data.get('target_essid', 'Unknown')}</title>
+<title>h4kfi Report - {data.get('target_essid', 'Unknown')}</title>
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
 body{{font-family:'Courier New',monospace;background:#0a0a0a;color:#e0e0e0;padding:2rem}}
@@ -144,7 +144,7 @@ code{{background:#1a1a1a;padding:0.15rem 0.4rem;border-radius:2px;font-size:0.85
 <body>
 <div class="container">
 <div class="header">
-<h1>AutoWIFI</h1>
+<h1>h4kfi</h1>
 <div class="subtitle">Wireless Security Audit Report | {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
 </div>
 <div class="meta">
@@ -173,7 +173,7 @@ code{{background:#1a1a1a;padding:0.15rem 0.4rem;border-radius:2px;font-size:0.85
 <tbody>{results_html if results_html else "<tr><td colspan='5' style='color:#666;text-align:center'>No results recorded</td></tr>"}</tbody>
 </table>
 </div>
-<div class="footer">AutoWIFI v2.0.0</div>
+<div class="footer">h4kfi v2.0.0</div>
 </div>
 </body>
 </html>"""

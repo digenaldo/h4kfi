@@ -1,15 +1,17 @@
-"""MCP (Model Context Protocol) server for AutoWIFI.
+"""MCP (Model Context Protocol) server for h4kfi.
 
 Exposes wireless pentesting tools over standard MCP stdio transport,
-usable by any MCP-compatible AI agent client: Claude Code, Codex,
-Gemini, Cursor, etc. See README.md for per-client setup.
+built primarily for OpenCode and usable by any MCP-compatible AI agent
+client (Cursor, Codex, Gemini, Claude Code, etc). See README.md for
+per-client setup, including a note on Claude Code's extra guardrail
+layer.
 
 Usage:
-  autowifi-mcp              # stdio mode
+  h4kfi-mcp              # stdio mode
 
 Requires the "mcp" extra (mcp>=1.0,<2.0 - the low-level Server
 decorator API this module uses was removed in mcp 2.x):
-  pip install autowifi[mcp]
+  pip install h4kfi[mcp]
 """
 
 import json
@@ -20,17 +22,17 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import TextContent, Tool
 
-from autowifi import deps
-from autowifi import interface as iface
-from autowifi.scanner import NetworkScanner
-from autowifi.attacks import (
+from h4kfi import deps
+from h4kfi import interface as iface
+from h4kfi.scanner import NetworkScanner
+from h4kfi.attacks import (
     WPAAttack, WPSAttack, PMKIDAttack, Deauth,
     get_recommended_attacks,
 )
-from autowifi.cracker import Cracker, Backend, find_wordlists
-from autowifi.handshake import verify_handshake
+from h4kfi.cracker import Cracker, Backend, find_wordlists
+from h4kfi.handshake import verify_handshake
 
-server = Server("autowifi")
+server = Server("h4kfi")
 
 # Shared state across tool calls
 _state = {
@@ -279,7 +281,7 @@ def _dispatch(name: str, args: dict) -> Any:
         return _serialize_result(result)
 
     elif name == "wps_pixie_dust":
-        from autowifi.attacks import WPSAttack
+        from h4kfi.attacks import WPSAttack
         atk = WPSAttack(args["interface"], args["bssid"], args["channel"], args.get("essid", ""))
         result = atk.pixie_dust(timeout=args.get("timeout", 300))
         return _serialize_result(result)
@@ -306,7 +308,7 @@ def _dispatch(name: str, args: dict) -> Any:
         return [{"path": w[0], "size": w[1], "name": w[2]} for w in wl]
 
     elif name == "check_dependencies":
-        from autowifi.deps import REQUIRED, OPTIONAL, check_tool
+        from h4kfi.deps import REQUIRED, OPTIONAL, check_tool
         result = {}
         for tool, pkg in REQUIRED.items():
             result[tool] = {"installed": check_tool(tool), "required": True, "install": pkg}
@@ -323,7 +325,7 @@ async def _run_stdio():
 
 
 def main():
-    """Entry point for autowifi-mcp command."""
+    """Entry point for h4kfi-mcp command."""
     import asyncio
     asyncio.run(_run_stdio())
 

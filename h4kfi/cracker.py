@@ -88,7 +88,7 @@ class Cracker:
 
         hc_file = cap_file
         if cap_file.endswith(".cap") or cap_file.endswith(".pcap"):
-            from autowifi.handshake import convert_to_hc22000
+            from h4kfi.handshake import convert_to_hc22000
             converted = convert_to_hc22000(cap_file)
             if converted:
                 hc_file = converted
@@ -132,7 +132,7 @@ class Cracker:
 
         hccapx_file = cap_file
         if cap_file.endswith(".cap") or cap_file.endswith(".pcap"):
-            from autowifi.handshake import convert_to_hccapx
+            from h4kfi.handshake import convert_to_hccapx
             converted = convert_to_hccapx(cap_file)
             if converted:
                 hccapx_file = converted
