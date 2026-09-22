@@ -21,11 +21,11 @@ INFO = "cyan"
 KEY_COLOR = "bold green"
 
 BANNER_ART = """[bold green]
-   █████  ██    ██ ████████  ██████  ██     ██ ██ ███████ ██
-  ██   ██ ██    ██    ██    ██    ██ ██     ██ ██ ██      ██
-  ███████ ██    ██    ██    ██    ██ ██  █  ██ ██ █████   ██
-  ██   ██ ██    ██    ██    ██    ██ ██ ███ ██ ██ ██      ██
-  ██   ██  ██████     ██     ██████   ███ ███  ██ ██      ██
+  ██   ██ ██  ███ ██   ██ ███████  █████
+  ██   ██ ██   ██ ██  ██  ██         ██
+  ███████ ███████ ████    █████      ██
+  ██   ██      ██ ██  ██  ██         ██
+  ██   ██      ██ ██   ██ ██       █████
 [/bold green]"""
 
 
@@ -37,7 +37,7 @@ class Display:
     def clear(self):
         os.system("clear" if os.name == "posix" else "cls")
 
-    def banner(self, version="2.0.0"):
+    def banner(self, version="0.1.0"):
         self.console.print(BANNER_ART, justify="center")
         self.console.print(
             f"  [dim]v{version}[/] [bright_black]|[/] [dim]Wireless Penetration Testing Framework[/]",
