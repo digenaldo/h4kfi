@@ -222,6 +222,10 @@ sudo h4kfi
 
 Launches the full TUI with menu-driven workflow — scan, select target, attack, crack.
 
+<p align="center">
+  <img src="docs/cli.png" alt="h4kfi interactive TUI" width="720">
+</p>
+
 ### CLI mode
 
 Scan networks:
