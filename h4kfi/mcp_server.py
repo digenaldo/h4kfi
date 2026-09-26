@@ -153,7 +153,9 @@ async def list_tools() -> list[Tool]:
                 "properties": {
                     "interface": {"type": "string", "description": "Monitor mode interface"},
                     "bssid": {"type": "string", "description": "Target BSSID"},
+                    "client": {"type": "string", "description": "Optional specific client MAC to disconnect; omit for broadcast"},
                     "count": {"type": "integer", "description": "Number of deauth frames (0=continuous)", "default": 15},
+                    "duration": {"type": "integer", "description": "If set, run a continuous deauth flood for this many seconds"},
                 },
                 "required": ["interface", "bssid"],
             },
@@ -290,7 +292,14 @@ def _dispatch(name: str, args: dict) -> Any:
         return _serialize_result(result)
 
     elif name == "deauth":
-        d = Deauth(args["interface"], args["bssid"], count=args.get("count", 15))
+        d = Deauth(args["interface"], args["bssid"], client=args.get("client"), count=args.get("count", 15))
+        if args.get("duration"):
+            d.run_continuous()
+            try:
+                time.sleep(args["duration"])
+            finally:
+                d.stop()
+            return {"success": True, "mode": "continuous", "duration": args["duration"], "count": 0}
         d.run()
         d.wait(timeout=30)
         return {"success": True, "count": args.get("count", 15)}
