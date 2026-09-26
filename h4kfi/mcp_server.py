@@ -15,7 +15,9 @@ decorator API this module uses was removed in mcp 2.x):
 """
 
 import json
+import os
 import sys
+import time
 from typing import Any
 
 from mcp.server import Server
@@ -305,7 +307,7 @@ def _dispatch(name: str, args: dict) -> Any:
 
     elif name == "find_wordlists":
         wl = find_wordlists()
-        return [{"path": w[0], "size": w[1], "name": w[2]} for w in wl]
+        return [{"path": p, "size": size, "name": os.path.basename(p)} for p, size in wl]
 
     elif name == "check_dependencies":
         from h4kfi.deps import REQUIRED, OPTIONAL, check_tool
