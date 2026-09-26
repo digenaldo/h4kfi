@@ -1,6 +1,7 @@
 import subprocess
 import re
 import os
+import tempfile
 import time
 from enum import Enum
 from dataclasses import dataclass
@@ -95,11 +96,13 @@ class Cracker:
             else:
                 return CrackResult(False, "", "hashcat", 0, 0)
 
+        potfile = os.path.join(tempfile.gettempdir(), "h4kfi_hashcat.pot")
         cmd = [
             "hashcat", "-m", "22000",
             hc_file, wordlist,
             "--force", "-w", "3",
             "--status", "--status-timer", "5",
+            "--potfile-path", potfile,
         ]
 
         try:
@@ -107,20 +110,22 @@ class Cracker:
             output = result.stdout
 
             for line in output.split("\n"):
-                if ":" in line and not line.startswith("#") and not line.startswith("Session"):
+                # Only a line in hashcat's 22000 output format (starting with
+                # "WPA*") represents a cracked hash. Status/summary lines also
+                # contain colons and must never be mistaken for a key.
+                if line.startswith("WPA*") and ":" in line:
                     parts = line.split(":")
-                    if len(parts) >= 4:
-                        key = parts[-1].strip()
-                        if key and len(key) >= 8:
-                            return CrackResult(True, key, "hashcat", time.time() - start, 0)
-
-            show_cmd = ["hashcat", "-m", "22000", hc_file, "--show"]
-            show_result = subprocess.run(show_cmd, capture_output=True, text=True, timeout=30)
-            for line in show_result.stdout.strip().split("\n"):
-                if ":" in line:
-                    key = line.split(":")[-1].strip()
-                    if key and len(key) >= 8:
+                    key = parts[-1].strip()
+                    if key:
                         return CrackResult(True, key, "hashcat", time.time() - start, 0)
+
+            if os.path.exists(potfile):
+                with open(potfile, "r") as f:
+                    for line in f:
+                        if ":" in line:
+                            key = line.split(":")[-1].strip()
+                            if key:
+                                return CrackResult(True, key, "hashcat", time.time() - start, 0)
 
         except (subprocess.TimeoutExpired, FileNotFoundError):
             pass
@@ -164,22 +169,24 @@ class Cracker:
 
     def _crack_hashcat_pmkid(self, hash_file, wordlist):
         start = time.time()
+        potfile = os.path.join(tempfile.gettempdir(), "h4kfi_hashcat.pot")
         cmd = [
             "hashcat", "-m", "22000",
             hash_file, wordlist,
             "--force", "-w", "3",
+            "--potfile-path", potfile,
         ]
 
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=86400)
 
-            show_cmd = ["hashcat", "-m", "22000", hash_file, "--show"]
-            show_result = subprocess.run(show_cmd, capture_output=True, text=True, timeout=30)
-            for line in show_result.stdout.strip().split("\n"):
-                if ":" in line:
-                    key = line.split(":")[-1].strip()
-                    if key and len(key) >= 8:
-                        return CrackResult(True, key, "hashcat", time.time() - start, 0)
+            if os.path.exists(potfile):
+                with open(potfile, "r") as f:
+                    for line in f:
+                        if ":" in line:
+                            key = line.split(":")[-1].strip()
+                            if key:
+                                return CrackResult(True, key, "hashcat", time.time() - start, 0)
 
         except (subprocess.TimeoutExpired, FileNotFoundError):
             pass

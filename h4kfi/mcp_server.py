@@ -15,7 +15,9 @@ decorator API this module uses was removed in mcp 2.x):
 """
 
 import json
+import os
 import sys
+import time
 from typing import Any
 
 from mcp.server import Server
@@ -82,6 +84,7 @@ async def list_tools() -> list[Tool]:
                 "properties": {
                     "interface": {"type": "string", "description": "Monitor mode interface"},
                     "duration": {"type": "integer", "description": "Scan duration in seconds", "default": 30},
+                    "channel": {"type": "integer", "description": "Lock scan to a single channel (e.g. 5 GHz band); omit to hop across 2.4/5 GHz"},
                 },
                 "required": ["interface"],
             },
@@ -150,7 +153,9 @@ async def list_tools() -> list[Tool]:
                 "properties": {
                     "interface": {"type": "string", "description": "Monitor mode interface"},
                     "bssid": {"type": "string", "description": "Target BSSID"},
+                    "client": {"type": "string", "description": "Optional specific client MAC to disconnect; omit for broadcast"},
                     "count": {"type": "integer", "description": "Number of deauth frames (0=continuous)", "default": 15},
+                    "duration": {"type": "integer", "description": "If set, run a continuous deauth flood for this many seconds"},
                 },
                 "required": ["interface", "bssid"],
             },
@@ -251,7 +256,7 @@ def _dispatch(name: str, args: dict) -> Any:
 
     elif name == "scan_networks":
         scanner = NetworkScanner(args["interface"])
-        networks = scanner.scan(duration=args.get("duration", 30))
+        networks = scanner.scan(duration=args.get("duration", 30), channel=args.get("channel"))
         _state["networks"] = networks
         return {"count": len(networks), "networks": [_serialize_network(n) for n in networks]}
 
@@ -287,7 +292,14 @@ def _dispatch(name: str, args: dict) -> Any:
         return _serialize_result(result)
 
     elif name == "deauth":
-        d = Deauth(args["interface"], args["bssid"], count=args.get("count", 15))
+        d = Deauth(args["interface"], args["bssid"], client=args.get("client"), count=args.get("count", 15))
+        if args.get("duration"):
+            d.run_continuous()
+            try:
+                time.sleep(args["duration"])
+            finally:
+                d.stop()
+            return {"success": True, "mode": "continuous", "duration": args["duration"], "count": 0}
         d.run()
         d.wait(timeout=30)
         return {"success": True, "count": args.get("count", 15)}
@@ -305,7 +317,7 @@ def _dispatch(name: str, args: dict) -> Any:
 
     elif name == "find_wordlists":
         wl = find_wordlists()
-        return [{"path": w[0], "size": w[1], "name": w[2]} for w in wl]
+        return [{"path": p, "size": size, "name": os.path.basename(p)} for p, size in wl]
 
     elif name == "check_dependencies":
         from h4kfi.deps import REQUIRED, OPTIONAL, check_tool
