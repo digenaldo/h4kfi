@@ -84,6 +84,7 @@ async def list_tools() -> list[Tool]:
                 "properties": {
                     "interface": {"type": "string", "description": "Monitor mode interface"},
                     "duration": {"type": "integer", "description": "Scan duration in seconds", "default": 30},
+                    "channel": {"type": "integer", "description": "Lock scan to a single channel (e.g. 5 GHz band); omit to hop across 2.4/5 GHz"},
                 },
                 "required": ["interface"],
             },
@@ -253,7 +254,7 @@ def _dispatch(name: str, args: dict) -> Any:
 
     elif name == "scan_networks":
         scanner = NetworkScanner(args["interface"])
-        networks = scanner.scan(duration=args.get("duration", 30))
+        networks = scanner.scan(duration=args.get("duration", 30), channel=args.get("channel"))
         _state["networks"] = networks
         return {"count": len(networks), "networks": [_serialize_network(n) for n in networks]}
 
